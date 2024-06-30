@@ -1,0 +1,266 @@
+﻿@{
+    //Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Order Entry Form</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="~/css/style.css">
+</head>
+<body>
+
+    <div class="main-section">
+    <div class="form-container">
+        <div class="form-header text-center">
+            <h4 class="heading-text">Purchase Order Entry Form</h4>
+        </div>
+        <div class="form-body">
+
+         <div class="form-top-section">
+                <div class="form-row align-form-row ">
+                    <div class="form-group ">
+                        <label for="refId">REF. ID:</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                    <button class="btn btn-outline-secondary" onclick="decrement(@ViewBag.RefId)" type="button"><i class="fas fa-angle-left"></i></button>
+                            </div>
+                                <input type="text" class="form-control" id="refId" value="@ViewBag.RefId" readonly>
+                            <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" onclick="increment()" type="button"><i class="fas fa-angle-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label for="poDate">PO DATE:</label>
+                        <input type="date" class="form-control" id="poDate">
+                    </div>
+                    <div class="form-group ">
+                        <label for="expectedDate">EXPECTED DATE:</label>
+                        <input type="date"  class="form-control" id="expectedDate">
+                    </div>
+                  
+                </div>
+
+                 
+                <div class="form-row align-form-row">
+                    <div class="form-group ">
+                        <label for="poNo">PO NO.:</label>
+                        <input type="text" class="form-control" id="poNo">
+                    </div>
+                    <div class="form-group ">
+                        <label for="supplier">SUPPLIER:</label>
+                        <select class="form-control" id="supplier">
+                            <option selected>Choose...</option>
+                            <option>Supplier 1</option>
+                            <option>Supplier 2</option>
+                            <option>Supplier 3</option>
+                        </select>
+                    </div>
+                    <div class="form-group ">
+                        <label for="remark">REMARK:</label>
+                        <input type="text" class="form-control" id="remark">
+                    </div>
+                </div>
+
+
+
+            </div>
+                
+                <div class="divider-line"></div>
+                    <div class="form-row custom-form-row">
+                        <div class="form-group col-md-4">
+                            <label for="item">ITEM:</label>
+                            <input type="text"  class="form-control" id="item" list="item-val"  placeholder="Auto Complete">
+                            <datalist id="item-val">
+                               <option>Item1</option>
+                               <option>Item2</option>
+                               <option>Item3</option>
+                            </datalist>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="qty">QTY.:</label>
+                            <input type="number"   class="form-control" id="qty">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="rate">RATE ($):</label>
+                        <input type="number"  class="form-control" id="rate">
+                        </div>
+                        <div class="form-group  align-self-end">
+                            @*class="btn btn-primary"*@
+                            <button type="button" onclick="Insert()" ><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                <table class="table table-bordered" id="itemTableBody">
+                    <thead>
+                        <tr>
+                            <th>ITEM NAME</th>
+                            <th>QTY.</th>
+                            <th>RATE ($)</th>
+                            <th class="text-center">EDIT</th>
+                            <th class="text-center">DELETE</th>
+                        </tr>
+                    </thead>
+                   
+                </table>
+                <div class="form-footer text-right">
+                    <button type="button" onclick="saveOrder()" class="btn btn-success btn-save">SAVE</button>
+                    <a href="~/OrderPurchase/OrderList" class="btn btn-danger btn-close">CLOSE</a>
+                </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    
+
+      <script>
+        let items = [];
+
+        function Insert() {
+
+            let val = {
+                item: document.getElementById("item").value,
+                qty: document.getElementById("qty").value,
+                rate: document.getElementById("rate").value
+            };
+
+            if(!val.item){
+                alert("Item Not Found");
+                return;
+            }
+
+            if( (val.item != "Item1" && val.item != "Item2" && val.item != "Item3")){
+                 alert("Item Not Found");
+                return;
+            }
+
+            if(!val.qty){
+                 alert("Quantity Not Found");
+                return;
+            }
+
+             if(!val.rate){
+                 alert("Rate Not Found");
+                return;
+            }
+
+            items.push(val);
+
+            let tableBody = document.getElementById("itemTableBody");
+            let newRow = tableBody.insertRow();
+
+            let cellItem = newRow.insertCell(0);
+            let cellQty = newRow.insertCell(1);
+            let cellRate = newRow.insertCell(2);
+            let cellEdit = newRow.insertCell(3);
+            let cellDelete = newRow.insertCell(4);
+
+            cellItem.textContent = val.item;
+            cellQty.textContent = val.qty;
+            cellRate.textContent = val.rate;
+
+            let btnEdit = document.createElement("button");
+            btnEdit.className = "btn btn-link btn-edit";
+            btnEdit.innerHTML = '<i class="fas fa-pencil-alt"></i>';
+            btnEdit.onclick = function() {
+                editRow(newRow, val);
+            };
+
+            let btnDelete = document.createElement("button");
+            btnDelete.className = "btn btn-link btn-delete";
+            btnDelete.innerHTML = '<i class="fas fa-trash"></i>';
+            btnDelete.onclick = function() {
+                deleteRow(newRow, val);
+            };
+
+            cellEdit.className = "text-center";
+            cellEdit.appendChild(btnEdit);
+
+            cellDelete.className = "text-center";
+            cellDelete.appendChild(btnDelete);
+
+            document.getElementById("item").value = "";
+            document.getElementById("qty").value = "";
+            document.getElementById("rate").value = "";
+        }
+
+        function editRow(row, val) {
+            document.getElementById("item").value = val.item;
+            document.getElementById("qty").value = val.qty;
+            document.getElementById("rate").value = val.rate;
+
+            let index = items.indexOf(val);
+            if (index > -1) {
+                items.splice(index, 1);
+            }
+            row.remove();
+        }
+
+        function deleteRow(row, val) {
+            let index = items.indexOf(val);
+            if (index > -1) {
+                items.splice(index, 1);
+            }
+            row.remove();
+        }
+
+        function saveOrder()
+        {
+            var val= {
+                refId: document.getElementById("refId").value,
+                pODATE: document.getElementById("poDate").value,
+                expectedDate: document.getElementById("expectedDate").value,
+                pONO: document.getElementById("poNo").value,
+                supplier: document.getElementById("supplier").value,
+                remarks : document.getElementById("remark").value,
+                quantityItems: items,
+
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("SavePurchaseOrder", "OrderPurchaseController")",
+                data: JSON.stringify(val),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                   alert('saved successfully');
+                   location.reload();
+                },
+                error: function (data) {
+                    console.log(data.responseJSON.message);
+                    alert(data.responseJSON.message);
+                }
+            });
+        }
+
+        function increment(){
+            var value = parseInt(document.getElementById("refId").value);
+            value = value+1;
+            document.getElementById("refId").value = "00"+value;
+        }
+        function decrement(peek) {
+            var start = parseInt(peek);
+            console.log(start);
+            var value = parseInt(document.getElementById("refId").value);
+            value = value - 1;
+            if(value<=0 || value<=start){
+                document.getElementById("refId").value = "00" + start;
+                return;
+            }
+            document.getElementById("refId").value = "00" + value;
+        }
+
+
+    </script>
+
+</body>
+</html>
